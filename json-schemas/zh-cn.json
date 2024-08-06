@@ -1,0 +1,22 @@
+{
+  "$schema": "./schema.json",
+  "aBc1_as-as":111,
+  "abc":true,
+  "abcA":{
+    "abc": "描述",
+    "afc": 123,
+    "aDF":"描述",
+    "aaa":{
+      "bbb": 123,
+      "bb":{
+        "bbb":{
+          "asf":123
+        }
+      }
+    }
+  },
+  "respError": {
+    "001": "编码不唯一",
+    "002": "名称已存在"
+  }
+}

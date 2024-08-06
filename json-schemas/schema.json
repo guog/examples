@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "hollimos-i18n",
+  "title": "HOLLiMOS 前端国际化文件",
+  "description": "HOLLiMOS 前端国际化(internationalization, 简称i18n)语言文件,配合vue-i18N组件使用,遵循HOLLiMOS前端国际化规范,详见vue-i18n官方文档",
+  "definitions": {
+    "propertyNames": {
+      "pattern": "^[a-z][a-zA-Z0-9]*$",
+      "minLength": 1,
+      "maxLength": 214
+    },
+    "property": {
+      "type": ["string", "object"],
+      "propertyNames": {
+        "$ref": "#/definitions/propertyNames"
+      },
+      "additionalProperties": {
+        "type": ["string", "object"],
+        "propertyNames": {
+          "$ref": "#/definitions/propertyNames"
+        }
+      },
+      "$ref": "#"
+    }
+  },
+  "patternProperties": {
+    "^.\\$schema": {
+      "type": ["string"],
+      "format": "uri-reference"
+    },
+    "^.*$": {
+      "$ref": "#/definitions/property"
+    }
+  },
+  "properties": {
+    "respError": {
+      "description": "来自远端API返回的错误信息",
+      "$ref": "#/definitions/property",
+      "examples": [
+        {
+          "B001": "编码不唯一",
+          "B002": "名称已存在"
+        }
+      ]
+    }
+  }
+}
