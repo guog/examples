@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bad-vue</title>
+
+    <style>
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .item {
+        flex: 0 1 auto;
+        margin: 10px;
+        padding: 10px;
+        background-color: blueviolet;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div v-for="i in datas" class="item">{{ i }}</div>
+    </div>
+
+    <script>
+      const count = 500_000
+
+      const { createApp } = Vue
+
+      createApp({
+        setup() {
+          return {
+            datas: new Array(count).fill(0).map((_, i) => i)
+          }
+        }
+      }).mount('.container')
+    </script>
+  </body>
+</html>

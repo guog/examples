@@ -1,12 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>BAD-生成很多元素</title>
+    <title>Bad</title>
+    <style>
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .item {
+        flex: 0 1 auto;
+        margin: 10px;
+        padding: 10px;
+        background-color: blueviolet;
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <button id="btn">生成很多元素</button>
-    </div>
-    <script src="./bad.js"></script>
+    <div class="container"></div>
+
+    <script>
+      render()
+
+      function render() {
+        const count = 500_000
+        const datas = new Array(count).fill(0).map((_, i) => i)
+        const container = document.querySelector('.container')
+        datas.forEach(data => {
+          const div = document.createElement('div')
+          div.className = 'item'
+          div.textContent = data
+          container.appendChild(div)
+        })
+      }
+    </script>
   </body>
 </html>
