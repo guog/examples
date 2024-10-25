@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Good-vue</title>
+
+    <style>
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap:5px;
+      }
+      .item {
+        flex: 0 1 auto;
+        width: 10px;
+        height: 10px;
+        background: #6699cc;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <template v-for="i in count">
+        <div class="item" v-if="defer(i)">{{ i }}</div>
+      </template>
+    </div>
+
+    <script>
+      const { createApp, ref } = Vue
+
+      createApp({
+        setup() {
+          return {
+            count: 500_000,
+            defer: useDeferred()
+          }
+        }
+      }).mount('.container')
+
+      /**
+       * 使用 useDeferred 函数来延迟执行某些操作。
+       * 这个函数通常用于在 Vue.js 组件中处理异步任务。
+       *
+       * @returns {Function} 包含控制延迟操作的方法。
+       */
+      function useDeferred() {
+        // 当前渲染的是第几帧
+        const frameIndex = ref(1)
+
+        /**
+         * 更新动画帧的函数。
+         *
+         * 该函数会增加帧索引值，并请求下一帧的动画更新。
+         * 它通过递归调用自身来实现连续的动画更新。
+         */
+        function updateFrame() {
+          // 增加帧索引值
+          frameIndex.value++
+          // 请求下一帧的动画更新
+          requestAnimationFrame(updateFrame)
+        }
+
+        updateFrame()
+
+        /**
+         * 延迟执行某些操作。
+         *
+         * @param {number} n 第几个元素
+         * @returns {boolean} 是否渲染。
+         */
+        return function (n) {
+          // 当前渲染的是第几帧>=n时，才渲染
+          return frameIndex.value * 100 >= n
+        }
+      }
+    </script>
+  </body>
+</html>

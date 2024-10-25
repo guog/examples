@@ -8,12 +8,13 @@
       .container {
         display: flex;
         flex-wrap: wrap;
+        gap:5px;
       }
       .item {
         flex: 0 1 auto;
-        margin: 10px;
-        padding: 10px;
-        background-color: blueviolet;
+        width: 10px;
+        height: 10px;
+        background: #6699cc;
       }
     </style>
   </head>
@@ -29,33 +30,33 @@
       function renderChunks() {
         let index = 0
         const count = 500_000
-        const data = new Array(count).fill(0).map((_, i) => i)
         const container = document.querySelector('.container')
 
         // DocumentFragment,轻量版的 Document ,不是真实 DOM 树的一部分，它的变化不会触发 DOM 树的重新渲染，且不会对性能产生影响。
         // https://developer.mozilla.org/zh-CN/docs/Web/API/DocumentFragment
         //const fragement = new DocumentFragment()
 
-        const renderChunk = deadline => {
+        function renderChunk(deadline) {
           while (
-            index < data.length &&
+            index < count &&
             (deadline.timeRemaining() > 0 || deadline.didTimeout)
           ) {
-            const item = data[index]
             const div = document.createElement('div')
 
-            div.textContent = item
+            //div.textContent = index
             div.className = 'item'
+
             container.appendChild(div)
             //fragement.appendChild(div)
             index++
           }
 
           //container.appendChild(fragement)
-          if (index < data.length) {
+          if (index < count) {
             requestIdleCallback(renderChunk)
           }
         }
+
         requestIdleCallback(renderChunk)
       }
     </script>
