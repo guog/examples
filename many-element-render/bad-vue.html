@@ -4,38 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bad-vue</title>
-
-    <style>
-      .container {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .item {
-        flex: 0 1 auto;
-        margin: 10px;
-        padding: 10px;
-        background-color: blueviolet;
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   </head>
   <body>
     <div class="container">
-      <div v-for="i in datas" class="item">{{ i }}</div>
+      <template v-for="(item, index) in items">
+        <div class="item" :data-id="item.id" :key="item.id"></div>
+      </template>
     </div>
 
     <script>
-      const count = 500_000
-
-      const { createApp } = Vue
+      const { createApp, ref } = Vue
+      const items= ref([])
 
       createApp({
         setup() {
           return {
-            datas: new Array(count).fill(0).map((_, i) => i)
+            items
           }
+        },
+        mounted() {
+          fetchDatas().then(datas => {
+            this.items = datas
+          })
         }
       }).mount('.container')
+
+      async function fetchDatas() {
+        const response = await fetch('//localhost:3001/datas')
+        return await response.json()
+      }
     </script>
   </body>
 </html>

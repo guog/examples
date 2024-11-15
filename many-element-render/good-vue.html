@@ -4,40 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Good-vue</title>
-
-    <style>
-      .container {
-        display: flex;
-        flex-wrap: wrap;
-        gap:5px;
-      }
-      .item {
-        flex: 0 1 auto;
-        width: 10px;
-        height: 10px;
-        background: #6699cc;
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   </head>
   <body>
     <div class="container">
-      <template v-for="i in count">
-        <div class="item" v-if="defer(i)">{{ i }}</div>
+      <template v-for="(item, index) in items">
+        <div class="item" v-if="defer(index)" :key="item.id" :data-id="item.id"></div>
       </template>
     </div>
 
     <script>
       const { createApp, ref } = Vue
+      const items = ref([])
+      const defer = useDeferred()
 
       createApp({
         setup() {
           return {
-            count: 500_000,
-            defer: useDeferred()
+            items,
+            defer
           }
+        },
+        mounted() {
+          const renderChunks = (datas, size = 100) => {
+            const renderChunk = deadline => {
+              while (
+                datas.length > 0 &&
+                (deadline.timeRemaining() > 0 || deadline.didTimeout)
+              ) {
+                // 分块处理数据
+                this.items.push(...datas.splice(0, size))
+              }
+              if (datas.length > 0) {
+                requestIdleCallback(renderChunk)
+              }
+            }
+            requestIdleCallback(renderChunk)
+          }
+
+          fetchDatas().then(datas => {
+            renderChunks(datas, 1000)
+          })
         }
       }).mount('.container')
+
+
+      async function fetchDatas() {
+        const response = await fetch('//localhost:3001/datas') //localhost:3001/datas?_limit=100
+        return await response.json()
+      }
+      // _____________
 
       /**
        * 使用 useDeferred 函数来延迟执行某些操作。
@@ -47,7 +64,7 @@
        */
       function useDeferred() {
         // 当前渲染的是第几帧
-        const frameIndex = ref(1)
+        const frameIndex = ref(0)
 
         /**
          * 更新动画帧的函数。
@@ -59,7 +76,9 @@
           // 增加帧索引值
           frameIndex.value++
           // 请求下一帧的动画更新
-          requestAnimationFrame(updateFrame)
+          if(frameIndex.value < 100) {
+            requestAnimationFrame(updateFrame)
+          }
         }
 
         updateFrame()
@@ -72,7 +91,7 @@
          */
         return function (n) {
           // 当前渲染的是第几帧>=n时，才渲染
-          return frameIndex.value * 100 >= n
+          return frameIndex.value * 5000 >= n
         }
       }
     </script>

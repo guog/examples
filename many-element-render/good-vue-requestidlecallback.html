@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Good-vue-requestidlecallback</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <template v-for="(item, index) in items">
+        <div class="item" :data-id="item.id"  :key="item.id"></div>
+      </template>
+    </div>
+
+    <script>
+      const { createApp, ref } = Vue
+      const items = ref([])
+
+      createApp({
+        setup() {
+          return {
+            items
+          }
+        },
+        mounted() {
+          const renderChunks = (datas, size = 100) => {
+            const renderChunk = deadline => {
+              while (
+                datas.length > 0 &&
+                (deadline.timeRemaining() > 0 || deadline.didTimeout)
+              ) {
+                // 分块处理数据
+                this.items.push(...datas.splice(0, size))
+              }
+              if (datas.length > 0) {
+                requestIdleCallback(renderChunk)
+              }
+            }
+            requestIdleCallback(renderChunk)
+          }
+
+          fetchDatas().then(datas => {
+            renderChunks(datas, 1000)
+          })
+        }
+      }).mount('.container')
+
+      async function fetchDatas() {
+        const response = await fetch('//localhost:3001/datas') //localhost:3001/datas?_limit=100
+        return await response.json()
+      }
+
+    </script>
+  </body>
+</html>
