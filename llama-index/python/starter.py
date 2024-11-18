@@ -15,6 +15,5 @@ index = VectorStoreIndex.from_documents(
 )
 
 query_engine = index.as_query_engine()
-response = query_engine.query("这是什么?")
+response = query_engine.query("GraphQL的优势有哪些?")
 print(response)
-
